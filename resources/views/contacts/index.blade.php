@@ -52,7 +52,7 @@
 												<th>
 													Phone
 												</th>
-												<th class="text-center">
+												<th class="text-center text-nowrap">
 													Actions
 												</th>
 											</tr></thead>
@@ -71,7 +71,7 @@
 													<td>
 														{{ $item->phone }} {{ !empty($item->phone_2) ? $item->phone_2:'' }}
 													</td>
-													<td class="text-center td-actions">
+													<td class="text-center text-nowrap td-actions">
 														<a rel="tooltip" href="{{ route('contacts@edit', ['id' => $item->id])  }}" class="btn btn-white btn-link btn-sm" data-original-title="Edit Contact">
 															<i class="material-icons">edit</i>
 														</a>

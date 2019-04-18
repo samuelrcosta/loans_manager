@@ -1,0 +1,14 @@
+select.form-control option{
+    background-color: #202940;
+}
+
+.card .card-header small{
+    float: right;
+    font-style: italic;
+    font-size: 15px;
+}
+
+td .btn.btn-sm{
+    padding: 5px;
+    margin: 5px;
+}

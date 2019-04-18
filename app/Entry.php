@@ -13,4 +13,8 @@ class Entry extends Model
 	public function task(){
 		return $this->belongsTo('App\Task');
 	}
+
+	public static function findByTask($task_id, $id){
+		return Entry::where("task_id", $task_id)->where('id', $id)->first();
+	}
 }

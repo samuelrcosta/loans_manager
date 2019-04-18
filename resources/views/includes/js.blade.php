@@ -6,7 +6,11 @@
 <script src="{{ asset('js/plugins/perfect-scrollbar.jquery.min.js') }}"></script>
 <!-- Chartist JS -->
 <script src="{{ asset('js/plugins/chartist.min.js') }}"></script>
+<!-- Jquery Mask -->
+<script src="{{ asset('js/jquery.mask.min.js') }}"></script>
 <!--  Notifications Plugin    -->
 <script src="{{ asset('js/plugins/bootstrap-notify.js') }}"></script>
 <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="{{ asset('js/material-dashboard.min.js') }}?v={{ filemtime('js/material-dashboard.min.js') }}"></script>
+<!-- Custom js -->
+<script src="{{ asset('js/custom.js') }}?v={{ filemtime('js/custom.js') }}"></script>

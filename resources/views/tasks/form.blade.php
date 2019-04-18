@@ -29,15 +29,15 @@
                         <div class="card">
                             <div class="card-header card-header-primary">
                                 @if(isset($data->id))
-                                <h4 class="card-title">Modify a Contact</h4>
-                                <p class="card-category">Edit a contact from your wallet</p>
+                                    <h4 class="card-title">Modify a Task</h4>
+                                    <p class="card-category">Edit a existent task</p>
                                 @else
-                                <h4 class="card-title">New Contact</h4>
-                                <p class="card-category">Register a new contact to your wallet</p>
-                            @endif
+                                    <h4 class="card-title">New Task</h4>
+                                    <p class="card-category">Register a new task</p>
+                                @endif
                             </div>
                             <div class="card-body">
-                                <form method="POST" action="{{ isset($data->id) ? route('contacts@update', ['id' => $data->id]):route('contacts@store') }}">
+                                <form method="POST" action="{{ isset($data->id) ? route('tasks@update', ['id' => $data->id]):route('tasks@store') }}">
                                     @csrf
 
                                     @if(isset($data->id))
@@ -47,22 +47,30 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group bmd-form-group">
-                                                <label class="bmd-label-floating" for="name">Name</label>
-                                                <input type="text" name="name" class="form-control {{ $errors->has('name') ? 'is-invalid':'' }}" maxlength="150" value="{{ isset($data->name) ? $data->name:'' }}">
-                                                @if ($errors->has('name'))
+                                                <label class="bmd-label-floating" for="contact">Contact</label>
+                                                <select name="contact" class="form-control {{ $errors->has('contact') ? 'is-invalid':'' }}">
+                                                    <option value="">---</option>
+                                                    @foreach($contacts as $contact)
+                                                    <option value="{{ $contact->id }}" {{ (isset($data->contact_id) && $contact->id == $data->contact_id) ? 'selected':'' }}>{{ $contact->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @if ($errors->has('contact'))
                                                     <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $errors->first('name') }}</strong>
+                                                        <strong>{{ $errors->first('contact') }}</strong>
                                                     </span>
                                                 @endif
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group bmd-form-group">
-                                                <label class="bmd-label-floating" for="nickname">Nickname</label>
-                                                <input type="text" name="nickname" class="form-control {{ $errors->has('nickname') ? 'is-invalid':'' }}" maxlength="100" value="{{ isset($data->nickname) ? $data->nickname:'' }}">
-                                                @if ($errors->has('nickname'))
+                                                <label class="bmd-label-floating" for="type">Type</label>
+                                                <select name="type" class="form-control {{ $errors->has('type') ? 'is-invalid':'' }}">
+                                                    <option value="income" {{ (isset($data->type) && 'income' == $data->type) ? 'selected':'' }}>Income</option>
+                                                    <option value="debt" {{ (isset($data->type) && 'debt' == $data->type) ? 'selected':'' }}>Debt</option>
+                                                </select>
+                                                @if ($errors->has('type'))
                                                     <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $errors->first('nickname') }}</strong>
+                                                        <strong>{{ $errors->first('type') }}</strong>
                                                     </span>
                                                 @endif
                                             </div>
@@ -71,11 +79,11 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group bmd-form-group">
-                                                <label class="bmd-label-floating" for="email">E-mail</label>
-                                                <input type="text" name="email" class="form-control {{ $errors->has('email') ? 'is-invalid':'' }}" maxlength="150" value="{{ isset($data->email) ? $data->email:'' }}">
-                                                @if ($errors->has('email'))
+                                                <label class="bmd-label-floating" for="title">Title</label>
+                                                <input type="text" name="title" class="form-control {{ $errors->has('title') ? 'is-invalid':'' }}" maxlength="255" value="{{ isset($data->title) ? $data->title:'' }}">
+                                                @if ($errors->has('title'))
                                                     <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $errors->first('email') }}</strong>
+                                                        <strong>{{ $errors->first('title') }}</strong>
                                                     </span>
                                                 @endif
                                             </div>
@@ -84,22 +92,25 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group bmd-form-group">
-                                                <label class="bmd-label-floating" for="phone">First Phone</label>
-                                                <input type="text" name="phone" class="form-control phone-format {{ $errors->has('phone') ? 'is-invalid':'' }}" maxlength="45" value="{{ isset($data->phone) ? $data->phone:'' }}">
-                                                @if ($errors->has('phone'))
+                                                <label class="bmd-label-floating" for="value">Value</label>
+                                                <input type="text" name="value" class="form-control currency-format {{ $errors->has('value') ? 'is-invalid':'' }}" value="{{ isset($data->value) ? number_format($data->value, 2, ',', '.'):'' }}">
+                                                @if ($errors->has('value'))
                                                     <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $errors->first('phone') }}</strong>
+                                                        <strong>{{ $errors->first('value') }}</strong>
                                                     </span>
                                                 @endif
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group bmd-form-group">
-                                                <label class="bmd-label-floating" for="phone_2">Second Phone</label>
-                                                <input type="text" name="phone_2" class="form-control phone-format {{ $errors->has('phone_2') ? 'is-invalid':'' }}" maxlength="45" value="{{ isset($data->phone_2) ? $data->phone_2:'' }}">
-                                                @if ($errors->has('phone_2'))
+                                                <label class="bmd-label-floating" for="status">Status</label>
+                                                <select name="status" class="form-control {{ $errors->has('status') ? 'is-invalid':'' }}">
+                                                    <option value="0" {{ (isset($data->status) && '0' == $data->status) ? 'selected':'' }}>Inactive</option>
+                                                    <option value="1" {{ (isset($data->status) && '1' == $data->status) ? 'selected':'' }}>Active</option>
+                                                </select>
+                                                @if ($errors->has('status'))
                                                     <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $errors->first('phone_2') }}</strong>
+                                                        <strong>{{ $errors->first('status') }}</strong>
                                                     </span>
                                                 @endif
                                             </div>

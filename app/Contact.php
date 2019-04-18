@@ -19,6 +19,6 @@ class Contact extends Model
 	}
 
 	public static function all($columns = array()){
-		return Contact::where('user_id', Auth::id())->get();
+		return Contact::where('user_id', Auth::id())->orderBy('name', 'asc')->get();
 	}
 }
