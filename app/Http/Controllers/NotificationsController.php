@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
+use Mail;
 use App\Config;
 use App\Alert;
 
@@ -51,7 +52,19 @@ class NotificationsController extends Controller
 		}
 
 		foreach ($alerts as $alert){
-			echo $alert->title." - date: ".$alert->date." - repeat: ".$alert->repeats.'<br>';
+			$this->sendEmail($alert);
 		}
+	}
+
+	private function sendEmail(\App\Alert $alert){
+		$user = $alert->user;
+		$emailSubject = $alert->title." - Loans Manager";
+		$emailView = 'notifications.email';
+		$emailContent = array('alert' => $alert);
+
+		Mail::send($emailView, $emailContent, function ($mail) use ($user, $emailSubject) {
+			$mail->from(env('MAIL_USERNAME'), 'Loans Manager');
+			$mail->to($user->email, $user->name)->subject($emailSubject);
+		});
 	}
 }
