@@ -53,6 +53,7 @@ class NotificationsController extends Controller
 
 		foreach ($alerts as $alert){
 			$this->sendEmail($alert);
+			echo $alert->title." - date: ".$alert->date." - repeat: ".$alert->repeats.'<br>';
 		}
 	}
 
@@ -62,9 +63,13 @@ class NotificationsController extends Controller
 		$emailView = 'notifications.email';
 		$emailContent = array('alert' => $alert);
 
-		Mail::send($emailView, $emailContent, function ($mail) use ($user, $emailSubject) {
-			$mail->from(env('MAIL_USERNAME'), 'Loans Manager');
-			$mail->to($user->email, $user->name)->subject($emailSubject);
-		});
+		try{
+			Mail::send($emailView, $emailContent, function ($mail) use ($user, $emailSubject) {
+				$mail->from(env('MAIL_USERNAME'), 'Loans Manager');
+				$mail->to($user->email, $user->name)->subject($emailSubject);
+			});
+		}catch (\Exception $e){
+			echo $e->getMessage();
+		}
 	}
 }
