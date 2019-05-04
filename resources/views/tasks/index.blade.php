@@ -42,6 +42,7 @@
                                             <thead class=" text-primary">
                                                 <tr>
                                                     <th>ID</th>
+                                                    <th class="text-center">Status</th>
                                                     <th>Title</th>
                                                     <th>Contact</th>
                                                     <th>Type</th>
@@ -51,9 +52,16 @@
                                             </thead>
                                             <tbody>
                                             @foreach($list as $item)
-                                                <tr data-title="{{ $item->title }}" data-id="{{ $item->id }}" data-action="{{ route('tasks@destroy', ['id' => $item->id]) }}">
+                                                <tr data-title="{{ $item->title }}" data-id="{{ $item->id }}" data-action="{{ route('tasks@destroy', ['id' => $item->id]) }}" data-token="{{ csrf_token() }}">
                                                     <td>
                                                         {{ $item->id }}
+                                                    </td>
+                                                    <td class="text-center" data-action="/tasks/{{ $item->id }}/editStatus">
+                                                        @if($item->status)
+                                                            <i class="material-icons status-change pointer text-success" data-value="0" title="Click to inactivate">check</i>
+                                                        @else
+                                                            <i class="material-icons status-change pointer text-danger" data-value="1" title="Click to activate">not_interested</i>
+                                                        @endif
                                                     </td>
                                                     <td>
                                                         {{ $item->title }}
@@ -131,6 +139,22 @@
     $('#delete-modal').find('form').attr('action', action);
 
     $('#delete-modal').modal('show');
+  });
+
+  $(document).on('click', '.status-change', function(){
+    let value = $(this).attr('data-value');
+    let action = $(this).parent().attr('data-action');
+    let token = $(this).parent().parent().attr('data-token');
+
+    $.ajax({
+      url: action,
+      type: 'post',
+      data: {status: value, _token: token}
+    }).done(function(){
+      window.location.reload();
+    }).fail(function(){
+      alert("Error on status update.");
+    });
   });
 </script>
 </body>

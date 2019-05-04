@@ -151,6 +151,28 @@ class AlertsController extends Controller
 		}
 	}
 
+	public function updateStatus(Request $request){
+		$id = (int)$request->id;
+		$alert = Alert::find($id);
+
+		if(!$alert){
+			return response(null, 404);
+		}
+
+		$request->validate([
+			'status' => ['required', 'numeric', Rule::in([0, 1])]
+		]);
+
+		$alert->status = $request->status;
+
+		try{
+			$alert->save();
+			return response(null, 200);
+		}catch(\Exception $e){
+			return response(null, 500);
+		}
+	}
+
 	public function destroy(Request $request)
 	{
 		$id = (int)$request->id;

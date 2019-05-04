@@ -1,3 +1,7 @@
+.pointer{
+    cursor: pointer;
+}
+
 select.form-control option{
     background-color: #202940;
 }
