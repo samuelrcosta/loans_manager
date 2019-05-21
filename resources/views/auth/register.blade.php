@@ -50,6 +50,12 @@
                                                     @endif
                                                 </div>
                                             </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="bmd-label-floating">Password Confirmation</label>
+                                                    <input id="password-confirm" type="password" class="form-control" name="password-confirm" required>
+                                                </div>
+                                            </div>
                                         </div>
                                         <button type="submit" class="btn btn-primary pull-right">Register</button>
                                         <div class="clearfix"></div>
