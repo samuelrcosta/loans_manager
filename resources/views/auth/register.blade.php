@@ -53,7 +53,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label class="bmd-label-floating">Password Confirmation</label>
-                                                    <input id="password-confirm" type="password" class="form-control" name="password-confirm" required>
+                                                    <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" required>
                                                 </div>
                                             </div>
                                         </div>
