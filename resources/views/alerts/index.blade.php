@@ -27,6 +27,7 @@
                     @endif
                     <div class="col-lg-12 col-md-12">
                         <a href="{{ route('alerts@create') }}" class="btn btn-success">New Alert</a>
+                        <button data-action="{{ route('alerts@storeSubscription') }}" class="btn btn-success ml-2 push-button"><i class="material-icons">notifications</i> Enable Notifications</button>
                     </div>
                     <div class="col-md-12">
                         <div class="card">
@@ -153,6 +154,135 @@
       alert("Error on status update.");
     });
   });
+
+  const pushButton = document.querySelector('.push-button');
+
+  let isSubscribed = false;
+  let swRegistration = null;
+
+  function initialiseUI() {
+    pushButton.addEventListener('click', function() {
+      pushButton.disabled = true;
+      if (isSubscribed) {
+        unsubscribeUser();
+      } else {
+        subscribeUser();
+      }
+    });
+
+    // Set the initial subscription value
+    swRegistration.pushManager.getSubscription()
+      .then(function(subscription) {
+        isSubscribed = !(subscription === null);
+
+        //updateSubscriptionOnServer(subscription);
+
+        if (isSubscribed) {
+          console.log('User IS subscribed.');
+        } else {
+          console.log('User is NOT subscribed.');
+        }
+
+        updateBtn();
+      });
+  }
+
+  function updateBtn() {
+    if (Notification.permission === 'denied') {
+      $(pushButton).html('<i class="material-icons">notifications</i> Notifications Blocked.');
+      pushButton.disabled = true;
+      updateSubscriptionOnServer(null);
+      return;
+    }
+
+    if (isSubscribed) {
+      $(pushButton).html('<i class="material-icons">notifications</i> Disable Notifications');
+    } else {
+      $(pushButton).html('<i class="material-icons">notifications</i> Enable Notifications');
+    }
+
+    pushButton.disabled = false;
+  }
+
+  navigator.serviceWorker.register('{{ asset("js/serviceWorker.js") }}')
+    .then(function(swReg) {
+      console.log('Service Worker is registered', swReg);
+
+      swRegistration = swReg;
+      initialiseUI();
+    });
+
+  function subscribeUser() {
+    const applicationServerKey = urlB64ToUint8Array(PUSH_PUBLIC_KEY);
+    swRegistration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: applicationServerKey
+    })
+      .then(function(subscription) {
+        console.log('User is subscribed:', subscription);
+
+        updateSubscriptionOnServer(subscription);
+
+        isSubscribed = true;
+
+        updateBtn();
+      })
+      .catch(function(err) {
+        console.log('Failed to subscribe the user: ', err);
+        updateBtn();
+      });
+  }
+
+  function unsubscribeUser() {
+    swRegistration.pushManager.getSubscription()
+      .then(function(subscription) {
+        if (subscription) {
+          return subscription.unsubscribe();
+        }
+      })
+      .catch(function(error) {
+        console.log('Error unsubscribing', error);
+      })
+      .then(function() {
+        updateSubscriptionOnServer(null);
+
+        console.log('User is unsubscribed.');
+        isSubscribed = false;
+
+        updateBtn();
+      });
+  }
+
+  function updateSubscriptionOnServer(subscription) {
+    let action = $(pushButton).attr('data-action');
+
+    if (subscription) { // Add or update subscription
+        let data = JSON.stringify(subscription);
+        $.ajax({
+            url: action,
+            type: 'post',
+            data: {data: data, fingerprint: localStorage.getItem('fingerprint')}
+        }).done(function(data){
+            console.log(data);
+        }).fail(function(){
+            alert("Error on subscribe.");
+        });
+    } else {
+      // Remove subscription
+      $.ajax({
+        url: action,
+        type: 'delete',
+        data: {fingerprint: localStorage.getItem('fingerprint')}
+      }).done(function(data){
+        console.log(data);
+      }).fail(function(response){
+        let status = response.status;
+        if(status == 500){
+          alert("Error on unsubscribe.");
+        }
+      });
+    }
+  }
 </script>
 </body>
 </html>

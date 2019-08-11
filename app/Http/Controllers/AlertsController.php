@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Task;
 use App\Alert;
+use App\Subscription;
 
 class AlertsController extends Controller
 {
@@ -202,6 +203,62 @@ class AlertsController extends Controller
 			}else{
 				return redirect()->route('alerts', ['id' => $alert->id])->with('responseError', 'An error has occurred');
 			}
+		}
+	}
+
+	public function storeSubscription(Request $request)
+	{
+		$request->validate([
+			'data' => 'required',
+			'fingerprint' => 'required'
+		]);
+
+		$subscription = Subscription::findByFingerprint($request->fingerprint);
+		if(!$subscription){ // New
+			$subscription = new Subscription();
+			$subscription->user_id = Auth::id();
+			$subscription->fingerprint = $request->fingerprint;
+			$subscription->data = $request->data;
+			$subscription->ip = $request->getClientIp(true);
+		}else{ // Update
+			$subscription->data = $request->data;
+			$subscription->ip = $request->getClientIp(true);
+		}
+
+		try {
+			$response = $subscription->save();
+
+			if($response){
+				return response(null, 200);
+			}else{
+				return response(null, 500);
+			}
+		} catch(Exception $e) {
+			return response(null, 500);
+		}
+	}
+
+	public function destroySubscription(Request $request)
+	{
+		$request->validate([
+			'fingerprint' => 'required'
+		]);
+
+		$subscription = Subscription::findByFingerprint($request->fingerprint);
+		if(!$subscription){ // Not exists
+			return response(null, 404);
+		}
+
+		try { // try to delete
+			$response = $subscription->delete();
+
+			if($response){
+				return response(null, 200);
+			}else{
+				return response(null, 500);
+			}
+		} catch(Exception $e) {
+			return response(null, 500);
 		}
 	}
 }

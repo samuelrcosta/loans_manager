@@ -18,6 +18,8 @@ Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/alerts', 'AlertsController@index')->name('alerts');
+Route::post('/alerts/subscription', 'AlertsController@storeSubscription')->name('alerts@storeSubscription');
+Route::delete('/alerts/subscription', 'AlertsController@destroySubscription')->name('alerts@destroySubscription');
 Route::get('/alerts/create/{task_id?}', 'AlertsController@create')->name('alerts@create');
 Route::get('/alerts/{id}/edit', 'AlertsController@edit')->name('alerts@edit');
 Route::post('/alerts/{id}/editStatus', 'AlertsController@updateStatus')->name('alerts@updateStatus');
