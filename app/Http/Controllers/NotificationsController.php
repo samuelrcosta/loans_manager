@@ -54,7 +54,7 @@ class NotificationsController extends Controller
 		}
 
 		foreach ($alerts as $alert){
-			//$this->sendEmail($alert);
+			$this->sendEmail($alert);
 			$this->sendPushAlert($alert);
 			echo '<br>'.$alert->title." - date: ".$alert->date." - repeat: ".$alert->repeats.'<br>';
 		}
